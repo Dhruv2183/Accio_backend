@@ -27,6 +27,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/video-frames', express.static(path.join(__dirname, 'uploads/video_captioning/frames')));
 
 
 // DB connection
