@@ -4,6 +4,32 @@ import path from 'path';
 import fs from 'fs';
 import { createRequire } from 'module';
 import mammoth from 'mammoth';
+import { spawn } from 'child_process';
+
+
+// Function to transcribe audio from video using Whisper
+async function transcribeAudioFromVideo(videoPath) {
+  return new Promise((resolve, reject) => {
+    const pyPath = path.join(process.cwd(), 'uploads/video_captioning/caption_video.py');
+    const py = spawn('python', [pyPath, videoPath]);
+
+    let data = '';
+    let error = '';
+
+    py.stdout.on('data', (chunk) => {
+      data += chunk.toString();
+    });
+
+    py.stderr.on('data', (chunk) => {
+      error += chunk.toString();
+    });
+
+    py.on('close', (code) => {
+      if (code === 0) resolve(data.trim());
+      else reject(new Error(error || 'Python captioning failed.'));
+    });
+  });
+}
 
 const require = createRequire(import.meta.url);
 const pdfParse = require('pdf-parse');
