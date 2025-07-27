@@ -22,7 +22,10 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:3000', 
+  origin: [
+    'https://acciojob-assessment-frontend.vercel.app',
+    'http://localhost:3000'
+  ],
   credentials: true, 
 }));
 app.use(express.json());
@@ -51,3 +54,5 @@ const PORT = process.env.PORT || 18000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+
