@@ -3,17 +3,17 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import connectDB from './utils/db.js';
+import connectDB from './src/utils/db.js';
 
 
-import aiRoutes from './routes/aiRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import sessionRoutes from "./routes/sessionRoutes.js";
-import messageRoutes from './routes/messageRoutes.js';
-import voiceRoutes from './routes/voiceRoutes.js';
-import codeRoutes from './routes/codeRoutes.js';
-import chatRoutes from './routes/chatRoutes.js';
-import uploadRoutes from './routes/uploadRoutes.js';
+import aiRoutes from './src/routes/aiRoutes.js';
+import authRoutes from './src/routes/authRoutes.js';
+import sessionRoutes from "./src/routes/sessionRoutes.js";
+import messageRoutes from './src/routes/messageRoutes.js';
+import voiceRoutes from './src/routes/voiceRoutes.js';
+import codeRoutes from './src/routes/codeRoutes.js';
+import chatRoutes from './src/routes/chatRoutes.js';
+import uploadRoutes from './src/routes/uploadRoutes.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
