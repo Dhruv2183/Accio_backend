@@ -61,7 +61,7 @@ Follow these instructions to set up and run the project locally.
     # .env
 
     # Server Configuration
-    PORT=8080
+    PORT=16000
 
     # MongoDB Connection String
     MONGO_URI=your_mongodb_atlas_connection_string
