@@ -1,0 +1,150 @@
+````markdown
+# ⚙️ AI Chat Application - Backend
+
+This is the backend server for the AI Chat Application. It's built with **Node.js** and **Express.js**, providing a robust RESTful API to handle user authentication, session management, and integration with external AI services like OpenAI and Groq.
+
+---
+
+## ✨ Features
+
+-   **Secure Authentication**: Uses JSON Web Tokens (JWT) for secure user authentication and protected routes.
+-   **RESTful API**: Well-structured API endpoints for managing users, chat sessions, and messages.
+-   **Multimodal AI Integration**: A dedicated service layer to communicate with external AI models using text, transcribed audio, and parsed documents.
+-   **Database Management**: Connects to **MongoDB Atlas** for persistent data storage using Mongoose schemas.
+-   **Advanced File Handling**: Supports multipart form data for file uploads (PDF, DOCX, images, audio, video) using Multer.
+-   **Voice-to-Text**: Transcribes user voice notes into text prompts using OpenAI's Whisper API.
+-   **Scalable Architecture**: Organized into controllers, services, routes, and models for maintainability.
+
+---
+
+## 🛠️ Tech Stack
+
+-   **Runtime**: [Node.js](https://nodejs.org/en)
+-   **Framework**: [Express.js](https://expressjs.com/)
+-   **Database**: [MongoDB](https://www.mongodb.com/) with [Mongoose](https://mongoosejs.com/) ODM
+-   **Authentication**: [JSON Web Token (JWT)](https://jwt.io/)
+-   **File Uploads**: [Multer](https://github.com/expressjs/multer)
+-   **File Parsing**: `pdf-parse`, `mammoth`
+-   **Environment Variables**: [dotenv](https://www.npmjs.com/package/dotenv)
+
+---
+
+## 🚀 Getting Started
+
+Follow these instructions to set up and run the project locally.
+
+### Prerequisites
+
+-   [Node.js](https://nodejs.org/en) (v18.x or newer)
+-   `npm` or `yarn`
+-   A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account and a database connection string.
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/Aniket12215523/acciojob_assessment_backend.git](https://github.com/Aniket12215523/acciojob_assessment_backend.git)
+    cd acciojob_assessment_backend
+    ```
+
+2.  **Install dependencies:**
+    ```sh
+    npm install
+    # OR
+    yarn install
+    ```
+
+3.  **Set up environment variables:**
+    Create a new file named `.env` in the root of your project and add the following variables.
+
+    ```env
+    # .env
+
+    # Server Configuration
+    PORT=8080
+
+    # MongoDB Connection String
+    MONGO_URI=your_mongodb_atlas_connection_string
+
+    # JWT Secret Key for signing tokens
+    JWT_SECRET=your_super_secret_jwt_key
+
+    # External AI API Keys
+    OPENAI_API_KEY=your_openai_api_key
+    GROQ_API_KEY=your_groq_api_key
+
+    # Frontend URL for CORS configuration
+    CORS_ORIGIN=http://localhost:3000
+    ```
+
+4.  **Run the server:**
+    For development with auto-reloading (if `nodemon` is a dev dependency):
+    ```sh
+    npm run dev
+    ```
+    For production:
+    ```sh
+    npm start
+    ```
+
+The API server should now be running at [http://localhost:8080](http://localhost:8080).
+
+---
+
+## 🔗 API Endpoints
+
+The API is structured around RESTful principles. All routes are prefixed with `/api`. Protected routes require a valid JWT `Bearer` token in the `Authorization` header.
+
+### **Authentication** (`/api/auth`)
+
+| Method | Endpoint    | Description                       | Protected | Request Body                      |
+| :----- | :---------- | :-------------------------------- | :-------- | :-------------------------------- |
+| `POST` | `/register` | Registers a new user.             | No        | `{ "name", "email", "password" }` |
+| `POST` | `/login`    | Logs in an existing user and gets a JWT. | No        | `{ "email", "password" }`         |
+
+### **Users** (`/api/users`)
+
+| Method | Endpoint | Description                               | Protected |
+| :----- | :------- | :---------------------------------------- | :-------- |
+| `GET`  | `/me`    | Fetches the current logged-in user's profile. | Yes       |
+
+### **Sessions (Chats)** (`/api/sessions`)
+
+This resource manages the chat conversations.
+
+| Method   | Endpoint | Description                                | Protected | Request Body                    |
+| :------- | :------- | :----------------------------------------- | :-------- | :------------------------------ |
+| `POST`   | `/`      | Creates a new, empty chat session.         | Yes       | `{"title": "New Chat"}`       |
+| `GET`    | `/`      | Gets a list of all sessions for the user.  | Yes       |                                 |
+| `GET`    | `/:id`   | Gets a single session and its messages.    | Yes       |                                 |
+| `PUT`    | `/:id`   | Updates a session's details (e.g., title). | Yes       | `{"title": "Updated Title"}`  |
+| `DELETE` | `/:id`   | Deletes a chat session and its messages.   | Yes       |                                 |
+
+### **Chat Interaction** (`/api/chat`)
+
+This endpoint handles the core text-based AI interaction.
+
+| Method | Endpoint | Description                                                     | Protected | Request Body                             |
+| :----- | :------- | :-------------------------------------------------------------- | :-------- | :--------------------------------------- |
+| `POST` | `/`      | Sends a user message to a session and gets a streamed AI response. | Yes       | `{"sessionId", "message", "fileUrl?"}` |
+
+### **Voice & File Handling** (`/api/upload`)
+
+These endpoints manage file uploads and processing.
+
+| Method | Endpoint                         | Description                                                                                             | Protected | Request Body                             |
+| :----- | :------------------------------- | :------------------------------------------------------------------------------------------------------ | :-------- | :--------------------------------------- |
+| `POST` | `/`                              | Uploads one or more files. Parses content from PDF, DOCX, TXT, and transcribes Video. Returns file URLs and parsed content. | Yes       | `multipart/form-data` with `files` array |
+| `POST` | `/session/:sessionId/voice-upload` | Uploads a single audio file, transcribes it, gets an AI reply, and saves both to the chat history.       | Yes       | `multipart/form-data` with `audio` file  |
+
+---
+
+## 🗂️ Database Schema
+
+The database consists of three main collections defined with Mongoose:
+
+-   **Users**: Stores user credentials (`name`, `email`, `password`) and profile information.
+-   **Sessions**: Stores metadata for each chat conversation (`title`, `userId`, `lastEditedAt`), linking it to a user.
+-   **Messages**: Stores individual messages (`role` ['user' or 'assistant'], `content`), each linked to a specific session.
+
+````
