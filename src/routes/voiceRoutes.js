@@ -16,7 +16,7 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, 
 });
 
-router.post('/api/session/:sessionId/voice-upload', upload.single('audio'), async (req, res) => {
+router.post('/session/:sessionId/voice-upload', upload.single('audio'), async (req, res) => {
   const { sessionId } = req.params;
   const filePath = req.file?.path;
 
