@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import fetch from 'node-fetch';
+import { v4 as uuidv4 } from 'uuid'; // Add this import
 import Session from '../models/sessionModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,27 +17,32 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, 
 });
 
-router.post('/session/:sessionId/voice-upload', upload.single('audio'), async (req, res) => {
+// Updated route to match your server.js prefix
+router.post('/sessions/:sessionId/voice-upload', upload.single('audio'), async (req, res) => {
   const { sessionId } = req.params;
   const filePath = req.file?.path;
+
+  console.log('Received sessionId:', sessionId); // Debug log
 
   if (!filePath) {
     return res.status(400).json({ error: 'No audio file uploaded' });
   }
 
   try {
+    // Create FormData for Whisper API
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(filePath));
+    formData.append('model', 'whisper-1');
+    formData.append('language', 'en');
+
     // Transcribe using OpenAI Whisper
     const whisperRes = await axios.post(
       'https://api.openai.com/v1/audio/transcriptions',
-      fs.createReadStream(filePath),
+      formData,
       {
         headers: {
           'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-          'Content-Type': 'multipart/form-data',
-        },
-        params: {
-          model: 'whisper-1',
-          language: 'en',
+          ...formData.getHeaders(),
         },
       }
     );
@@ -75,17 +81,14 @@ router.post('/session/:sessionId/voice-upload', upload.single('audio'), async (r
 
     fs.unlinkSync(filePath);
 
-    return res.json({ transcript, reply: aiReply });
-
-    // ===  Old OpenAI Whisper + OpenRouter ===
-    /*
-    const whisperRes = await axios.post(...);
-    const openRouterRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {...});
-    */
+    // Fixed response property name
+    return res.json({ transcription: transcript, reply: aiReply });
 
   } catch (error) {
     console.error('Transcription or AI reply error:', error.message);
-    fs.unlinkSync(filePath);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
     return res.status(500).json({ error: 'Voice processing failed' });
   }
 });
