@@ -23,7 +23,6 @@ dotenv.config();
 const app = express();
 app.use(cors({
   origin: [
-    'https://acciojob-assessment-frontend.vercel.app',
     'http://localhost:3000'
   ],
   credentials: true, 
@@ -50,7 +49,7 @@ app.get('/', (req, res) => {
   res.send('🔥 Backend is live');
 });
 
-const PORT = process.env.PORT || 18000;
+const PORT = process.env.PORT || 18002;
 app.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
 });
