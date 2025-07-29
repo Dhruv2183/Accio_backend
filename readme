@@ -43,7 +43,7 @@ Follow these instructions to set up and run the project locally.
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/Aniket12215523/acciojob_assessment_backend.git](https://github.com/Aniket12215523/acciojob_assessment_backend.git)
+    git clone []()
     cd acciojob_assessment_backend
     ```
 
