@@ -1,4 +1,0 @@
-transformers
-timm
-opencv-python
-pillow
